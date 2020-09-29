@@ -10,8 +10,6 @@
 export default class CountdownTimer {
   constructor({ selector }) {
     this.selector = selector;
-    this.startTimeValue = null;
-    this.difference = null;
 
     this.handleTenSecBtn = this.handleTenSecBtn.bind(this);
     this.handleTwentySecBtn = this.handleTwentySecBtn.bind(this);
@@ -19,11 +17,10 @@ export default class CountdownTimer {
     this.handleOneMinBtn = this.handleOneMinBtn.bind(this);
     this.hangleOneHourBtn = this.hangleOneHourBtn.bind(this);
     this.handleOneDayBtn = this.handleOneDayBtn.bind(this);
-    this.countTimeDate = this.countTimeDate.bind(this);
     this.handleResetBtn = this.handleResetBtn.bind(this);
     this.handleStartBtn = this.handleStartBtn.bind(this);
 
-    this.startBtn = document.querySelector(`${selector} .btn__start-pause`);
+    this.startBtn = document.querySelector(`${selector} .btn__start`);
     this.resetBtn = document.querySelector(`${selector} .bnt__reset`);
     this.tenSecBtn = document.querySelector(
       `${selector} button[data-value="10sec"]`,
@@ -48,6 +45,7 @@ export default class CountdownTimer {
     this.secs = document.querySelector(`${selector} .value[data-value="secs"]`);
   }
 
+  //чтоб не было таких списков можно ловить же всплытие?!
   timerInit() {
     this.tenSecBtn.addEventListener('click', this.handleTenSecBtn);
     this.twentySecBtn.addEventListener('click', this.handleTwentySecBtn);
@@ -82,19 +80,44 @@ export default class CountdownTimer {
   }
 
   handleStartBtn() {
-    this.startCountdown();
+    if (this.startBtn.classList.contains('btn__start')) {
+      this.startBtn.classList.replace('btn__start', 'btn__pause');
+      this.toggleStartBtnToPause();
+      this.startCountdown();
+    } else if (this.startBtn.classList.contains('btn__pause')) {
+      this.toggleStartBtnToContinue();
+      this.stopTimer();
+    } else if (this.startBtn.classList.contains('btn__continue')) {
+      this.toggleStartBtnToPause();
+    }
   }
 
   handleResetBtn() {
+    this.toggleStartBtnToStart();
     this.resetTimeValue();
+    this.stopTimer();
   }
 
   setStartTimeValue(ms) {
-    this.startTimeValue = ms;
-    this.countTimeDate(this.startTimeValue);
+    localStorage.setItem('startTimeValue', ms);
+
+    const setStartTime = this.getStartTimeValue();
+    this.converToDate(setStartTime);
   }
 
-  countTimeDate(ms) {
+  getStartTimeValue() {
+    return localStorage.getItem('startTimeValue');
+  }
+
+  setCurrentTimeValue(ms) {
+    localStorage.setItem('currentValue', ms);
+  }
+
+  getCurrentTimeValue() {
+    localStorage.getItem('currentValue');
+  }
+
+  converToDate(ms) {
     this.days.textContent = `0${parseInt(ms / 1000 / 3600 / 24)}`;
     this.hours.textContent = this.pad(Math.floor((ms / 1000 / 3600) % 24));
     this.mins.textContent = this.pad(Math.floor((ms / 1000 / 60) % 60));
@@ -106,21 +129,58 @@ export default class CountdownTimer {
   };
 
   resetTimeValue() {
-    clearTimeout(this.startCountdown);
     this.days.textContent = '00';
     this.hours.textContent = '00';
     this.mins.textContent = '00';
     this.secs.textContent = '00';
+
+    localStorage.removeItem('startTimeValue');
+    localStorage.removeItem('currentValue');
+  }
+
+  stopTimer() {
+    clearInterval(this.intervalId);
   }
 
   startCountdown() {
-    let countdownTime = this.startTimeValue + Date.now();
+    this.countdownTime = +this.getStartTimeValue() + Date.now();
 
-    let interval = setTimeout(function tickTack() {
-      interval = setTimeout(tickTack, 1000);
+    this.intervalId = setInterval(() => {
+      this.differenceTime = this.countdownTime - Date.now();
 
-      this.difference = countdownTime - Date.now();
-      this.countTimeDate(this.difference);
+      this.setCurrentTimeValue(this.differenceTime);
+      this.converToDate(this.differenceTime);
     }, 1000);
   }
+
+  toggleStartBtnToPause() {
+    this.startBtn.classList.replace('btn__continue', 'btn__pause');
+    this.startBtn.textContent = 'Пауза';
+  }
+
+  toggleStartBtnToContinue() {
+    this.startBtn.classList.replace('btn__pause', 'btn__continue');
+    this.startBtn.textContent = 'Продолжить';
+  }
+
+  toggleStartBtnToStart() {
+    if (this.startBtn.classList.contains('btn__pause')) {
+      this.startBtn.classList.replace('btn__pause', 'btn__start');
+    }
+    if (this.startBtn.classList.contains('btn__continue')) {
+      this.startBtn.classList.replace('btn__continue', 'btn__start');
+    }
+    this.startBtn.textContent = 'Старт';
+  }
+
+  // startCountdown() {
+  //   this.countdownTime = this.getStartTimeValue + Date.now();
+
+  //   this.interval = setTimeout(function tickTack() {
+  //     this.interval = setTimeout(tickTack, 1000);
+
+  //     this.differenceTime = this.countdownTime - Date.now();
+  //     this.converToDate(this.differenceTime);
+  //   }, 1000);
+  // }
 }
