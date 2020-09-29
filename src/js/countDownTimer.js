@@ -20,9 +20,8 @@ export default class CountdownTimer {
     this.hangleOneHourBtn = this.hangleOneHourBtn.bind(this);
     this.handleOneDayBtn = this.handleOneDayBtn.bind(this);
     this.countTimeDate = this.countTimeDate.bind(this);
-    this.resetTimeValue = this.resetTimeValue.bind(this);
-    this.hansleResetBtn = this.handleResetBtn.bind(this);
-    // this.handleStartBtn = this.handleStartBtn.bind(this);
+    this.handleResetBtn = this.handleResetBtn.bind(this);
+    this.handleStartBtn = this.handleStartBtn.bind(this);
 
     this.startBtn = document.querySelector(`${selector} .btn__start-pause`);
     this.resetBtn = document.querySelector(`${selector} .bnt__reset`);
@@ -55,7 +54,7 @@ export default class CountdownTimer {
     this.thirtySecBtn.addEventListener('click', this.handleThirtySecBtn);
     this.wunHourBtn.addEventListener('click', this.hangleOneHourBtn);
     this.wunDayBtn.addEventListener('click', this.handleOneDayBtn);
-    // this.startBtn.addEventListener('click', this.handleStartBtn);
+    this.startBtn.addEventListener('click', this.handleStartBtn);
     this.resetBtn.addEventListener('click', this.handleResetBtn);
   }
 
@@ -82,9 +81,9 @@ export default class CountdownTimer {
     this.setStartTimeValue(86400000);
   }
 
-  //   handleStartBtn() {
-  //     this.startCountdown();
-  //   }
+  handleStartBtn() {
+    this.startCountdown();
+  }
 
   handleResetBtn() {
     this.resetTimeValue();
@@ -107,6 +106,7 @@ export default class CountdownTimer {
   };
 
   resetTimeValue() {
+    clearTimeout(this.startCountdown);
     this.days.textContent = '00';
     this.hours.textContent = '00';
     this.mins.textContent = '00';
@@ -118,7 +118,6 @@ export default class CountdownTimer {
 
     let interval = setTimeout(function tickTack() {
       interval = setTimeout(tickTack, 1000);
-      console.log(countdownTime);
 
       this.difference = countdownTime - Date.now();
       this.countTimeDate(this.difference);
