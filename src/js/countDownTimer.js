@@ -9,8 +9,6 @@
 
 export default class CountdownTimer {
   constructor({ selector }) {
-    this.selector = selector;
-
     this.handleTenSecBtn = this.handleTenSecBtn.bind(this);
     this.handleTwentySecBtn = this.handleTwentySecBtn.bind(this);
     this.handleThirtySecBtn = this.handleThirtySecBtn.bind(this);
@@ -21,7 +19,7 @@ export default class CountdownTimer {
     this.handleStartBtn = this.handleStartBtn.bind(this);
 
     this.startBtn = document.querySelector(`${selector} .btn__start`);
-    this.resetBtn = document.querySelector(`${selector} .bnt__reset`);
+    this.resetBtn = document.querySelector(`${selector} .btn__reset`);
     this.tenSecBtn = document.querySelector(
       `${selector} button[data-value="10sec"]`,
     );
@@ -45,57 +43,70 @@ export default class CountdownTimer {
     this.secs = document.querySelector(`${selector} .value[data-value="secs"]`);
   }
 
-  //чтоб не было таких списков можно ловить же всплытие?!
-  timerInit() {
-    this.tenSecBtn.addEventListener('click', this.handleTenSecBtn);
-    this.twentySecBtn.addEventListener('click', this.handleTwentySecBtn);
-    this.thirtySecBtn.addEventListener('click', this.handleThirtySecBtn);
-    this.wunHourBtn.addEventListener('click', this.hangleOneHourBtn);
-    this.wunDayBtn.addEventListener('click', this.handleOneDayBtn);
-    this.startBtn.addEventListener('click', this.handleStartBtn);
-    this.resetBtn.addEventListener('click', this.handleResetBtn);
-  }
-
   handleTenSecBtn() {
     this.setStartTimeValue(10000);
+    this.removeDisabledStartBtn();
   }
 
   handleTwentySecBtn() {
     this.setStartTimeValue(20000);
+    this.removeDisabledStartBtn();
   }
 
   handleThirtySecBtn() {
     this.setStartTimeValue(30000);
+    this.removeDisabledStartBtn();
   }
 
   handleOneMinBtn() {
     this.setStartTimeValue(60000);
+    this.removeDisabledStartBtn();
   }
 
   hangleOneHourBtn() {
     this.setStartTimeValue(3600000);
+    this.removeDisabledStartBtn();
   }
+
   handleOneDayBtn() {
     this.setStartTimeValue(86400000);
+    this.removeDisabledStartBtn();
   }
 
   handleStartBtn() {
-    if (this.startBtn.classList.contains('btn__start')) {
-      this.startBtn.classList.replace('btn__start', 'btn__pause');
-      this.toggleStartBtnToPause();
-      this.startCountdown();
-    } else if (this.startBtn.classList.contains('btn__pause')) {
-      this.toggleStartBtnToContinue();
-      this.stopTimer();
-    } else if (this.startBtn.classList.contains('btn__continue')) {
-      this.toggleStartBtnToPause();
-    }
+    this.setDisabledBtn();
+    this.toggleStartBtnClass();
   }
 
   handleResetBtn() {
     this.toggleStartBtnToStart();
     this.resetTimeValue();
     this.stopTimer();
+    this.removeDisabledBtn();
+  }
+
+  setDisabledBtn() {
+    this.tenSecBtn.setAttribute('disabled', 'disabled');
+    this.twentySecBtn.setAttribute('disabled', 'disabled');
+    this.thirtySecBtn.setAttribute('disabled', 'disabled');
+    this.wunHourBtn.setAttribute('disabled', 'disabled');
+    this.wunDayBtn.setAttribute('disabled', 'disabled');
+  }
+
+  removeDisabledBtn() {
+    this.tenSecBtn.removeAttribute('disabled');
+    this.twentySecBtn.removeAttribute('disabled');
+    this.thirtySecBtn.removeAttribute('disabled');
+    this.wunHourBtn.removeAttribute('disabled');
+    this.wunDayBtn.removeAttribute('disabled');
+  }
+
+  setDisabledStartBtn() {
+    this.startBtn.setAttribute('disabled', 'disabled');
+  }
+
+  removeDisabledStartBtn() {
+    this.startBtn.removeAttribute('disabled');
   }
 
   setStartTimeValue(ms) {
@@ -114,7 +125,7 @@ export default class CountdownTimer {
   }
 
   getCurrentTimeValue() {
-    localStorage.getItem('currentValue');
+    return localStorage.getItem('currentValue');
   }
 
   converToDate(ms) {
@@ -124,9 +135,9 @@ export default class CountdownTimer {
     this.secs.textContent = this.pad(Math.floor((ms / 1000) % 60));
   }
 
-  pad = function (value) {
+  pad(value) {
     return String(value).padStart(2, 0);
-  };
+  }
 
   resetTimeValue() {
     this.days.textContent = '00';
@@ -136,22 +147,49 @@ export default class CountdownTimer {
 
     localStorage.removeItem('startTimeValue');
     localStorage.removeItem('currentValue');
+
+    this.setDisabledStartBtn();
   }
 
   stopTimer() {
     clearInterval(this.intervalId);
   }
 
-  startCountdown() {
-    this.countdownTime = +this.getStartTimeValue() + Date.now();
-
+  countdown() {
     this.intervalId = setInterval(() => {
       this.differenceTime = this.countdownTime - Date.now();
+
+      if (this.differenceTime <= 999) {
+        this.handleResetBtn();
+      }
 
       this.setCurrentTimeValue(this.differenceTime);
       this.converToDate(this.differenceTime);
     }, 1000);
   }
+
+  startCountdown() {
+    this.countdownTime = +this.getStartTimeValue() + Date.now();
+
+    this.countdown();
+  }
+
+  continueCountdown() {
+    this.countdownTime = +this.getCurrentTimeValue() + Date.now();
+
+    this.countdown();
+  }
+
+  // startCountdown() {
+  //   this.countdownTime = this.getStartTimeValue + Date.now();
+
+  //   this.interval = setTimeout(function tickTack() {
+  //     this.interval = setTimeout(tickTack, 1000);
+
+  //     this.differenceTime = this.countdownTime - Date.now();
+  //     this.converToDate(this.differenceTime);
+  //   }, 1000);
+  // }
 
   toggleStartBtnToPause() {
     this.startBtn.classList.replace('btn__continue', 'btn__pause');
@@ -173,14 +211,28 @@ export default class CountdownTimer {
     this.startBtn.textContent = 'Старт';
   }
 
-  // startCountdown() {
-  //   this.countdownTime = this.getStartTimeValue + Date.now();
+  toggleStartBtnClass() {
+    if (this.startBtn.classList.contains('btn__start')) {
+      this.startBtn.classList.replace('btn__start', 'btn__pause');
+      this.toggleStartBtnToPause();
+      this.startCountdown();
+    } else if (this.startBtn.classList.contains('btn__pause')) {
+      this.toggleStartBtnToContinue();
+      this.stopTimer();
+    } else if (this.startBtn.classList.contains('btn__continue')) {
+      this.toggleStartBtnToPause();
+      this.continueCountdown();
+    }
+  }
 
-  //   this.interval = setTimeout(function tickTack() {
-  //     this.interval = setTimeout(tickTack, 1000);
-
-  //     this.differenceTime = this.countdownTime - Date.now();
-  //     this.converToDate(this.differenceTime);
-  //   }, 1000);
-  // }
+  //чтоб не было таких списков можно ловить же всплытие?!
+  timerInit() {
+    this.tenSecBtn.addEventListener('click', this.handleTenSecBtn);
+    this.twentySecBtn.addEventListener('click', this.handleTwentySecBtn);
+    this.thirtySecBtn.addEventListener('click', this.handleThirtySecBtn);
+    this.wunHourBtn.addEventListener('click', this.hangleOneHourBtn);
+    this.wunDayBtn.addEventListener('click', this.handleOneDayBtn);
+    this.startBtn.addEventListener('click', this.handleStartBtn);
+    this.resetBtn.addEventListener('click', this.handleResetBtn);
+  }
 }

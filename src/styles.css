@@ -12,4 +12,94 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+  background-color: #dfedf0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding-top: 200px;
+}
+
+.field {
+  position: relative;
+  font-family: 'Anton';
+  font-size: 45px;
+  padding: 35px;
+}
+
+.label {
+  right: 10px;
+  top: 30px;
+  position: absolute;
+  font-size: 25px;
+  transform: rotate(45deg);
+  color: rgb(172, 172, 172);
+}
+
+.value {
+  display: block;
+  text-align: center;
+  width: 100px;
+  border: 1px black solid;
+  box-shadow: 1px 1px 10px 0px rgba(50, 50, 50, 0.49);
+}
+
+.timer {
+  display: inline-block;
+  border: solid 2px #505050;
+  border-radius: 30px;
+  padding: 80px;
+  box-shadow: 1px 1px 10px 0px rgba(50, 50, 50, 0.49);
+}
+
+.date__container {
+  display: flex;
+  justify-content: center;
+
+  min-width: 200px;
+  margin-bottom: 70px;
+}
+
+.btn__container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.btn {
+  width: 60px;
+  height: 40px;
+  border: solid 2px #ff5126;
+  border-radius: 7px;
+  color: #ff5126;
+  background-color: #ffffff;
+  transition: all 0.3s ease-out;
+  background-color: #dfedf0;
+}
+
+.btn:hover {
+  color: #ffffff;
+  background-color: #ff5126;
+}
+
+.btn:not(:last-child) {
+  margin-right: 30px;
+}
+
+.btn__start,
+.btn__pause,
+.btn__continue {
+  width: 100px;
+  height: 40px;
+}
+
+.btn__reset {
+  width: 100px;
+  height: 40px;
+}
+
+.set-time-btn {
+  margin-bottom: 30px;
 }
