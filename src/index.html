@@ -38,26 +38,60 @@
 
         <div class="btn__container">
           <div class="set-time-btn">
-            <button class="js-10s btn" type="button" data-value="10sec">
+            <button
+              class="js-10s btn"
+              type="button"
+              data-value="10sec"
+              data-time="10000"
+            >
               10 сек
             </button>
-            <button class="js-20s btn" type="button" data-value="20sec">
+            <button
+              class="js-20s btn"
+              type="button"
+              data-value="20sec"
+              data-time="20000"
+            >
               20 сек
             </button>
-            <button class="js-30s btn" type="button" data-value="30sec">
+            <button
+              class="js-30s btn"
+              type="button"
+              data-value="30sec"
+              data-time="30000"
+            >
               30 сек
             </button>
-            <button class="js-1h btn" type="button" data-value="1hours">
+            <button
+              class="js-1h btn"
+              type="button"
+              data-value="1hours"
+              data-time="3600000"
+            >
               1 час
             </button>
-            <button class="js-1day btn" type="button" data-value="1days">
+            <button
+              class="js-1day btn"
+              type="button"
+              data-value="1days"
+              data-time="86400000"
+            >
               1 день
             </button>
           </div>
 
           <div class="control-btn">
-            <button class="btn__start btn" type="button" disabled>Старт</button>
-            <button class="btn__reset btn" type="button">Сброс</button>
+            <button
+              class="btn__start btn"
+              type="button"
+              disabled
+              data-value="start"
+            >
+              Старт
+            </button>
+            <button class="btn__reset btn" type="button" data-value="reset">
+              Сброс
+            </button>
           </div>
         </div>
       </div>

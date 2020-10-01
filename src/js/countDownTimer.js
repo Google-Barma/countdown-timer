@@ -9,15 +9,6 @@
 
 export default class CountdownTimer {
   constructor({ selector }) {
-    this.handleTenSecBtn = this.handleTenSecBtn.bind(this);
-    this.handleTwentySecBtn = this.handleTwentySecBtn.bind(this);
-    this.handleThirtySecBtn = this.handleThirtySecBtn.bind(this);
-    this.handleOneMinBtn = this.handleOneMinBtn.bind(this);
-    this.hangleOneHourBtn = this.hangleOneHourBtn.bind(this);
-    this.handleOneDayBtn = this.handleOneDayBtn.bind(this);
-    this.handleResetBtn = this.handleResetBtn.bind(this);
-    this.handleStartBtn = this.handleStartBtn.bind(this);
-
     this.startBtn = document.querySelector(`${selector} .btn__start`);
     this.resetBtn = document.querySelector(`${selector} .btn__reset`);
     this.tenSecBtn = document.querySelector(
@@ -41,51 +32,16 @@ export default class CountdownTimer {
     );
     this.mins = document.querySelector(`${selector} .value[data-value="mins"]`);
     this.secs = document.querySelector(`${selector} .value[data-value="secs"]`);
+    this.form = document.querySelector(`${selector}`);
   }
 
-  handleTenSecBtn() {
-    this.setStartTimeValue(10000);
-    this.removeDisabledStartBtn();
-  }
-
-  handleTwentySecBtn() {
-    this.setStartTimeValue(20000);
-    this.removeDisabledStartBtn();
-  }
-
-  handleThirtySecBtn() {
-    this.setStartTimeValue(30000);
-    this.removeDisabledStartBtn();
-  }
-
-  handleOneMinBtn() {
-    this.setStartTimeValue(60000);
-    this.removeDisabledStartBtn();
-  }
-
-  hangleOneHourBtn() {
-    this.setStartTimeValue(3600000);
-    this.removeDisabledStartBtn();
-  }
-
-  handleOneDayBtn() {
-    this.setStartTimeValue(86400000);
-    this.removeDisabledStartBtn();
-  }
-
-  handleStartBtn() {
-    this.setDisabledBtn();
-    this.toggleStartBtnClass();
-  }
-
-  handleResetBtn() {
-    this.toggleStartBtnToStart();
-    this.resetTimeValue();
-    this.stopTimer();
-    this.removeDisabledBtn();
-  }
-
-  setDisabledBtn() {
+  setDisabledTimeBtn() {
+    // this.form.childNodes[3].childNodes[1].childNodes.forEach(item => {
+    //   if (item !== 'text') {
+    //     console.log(item);
+    //     // item.setAttribute('disabled', 'disabled');
+    //   }
+    // });
     this.tenSecBtn.setAttribute('disabled', 'disabled');
     this.twentySecBtn.setAttribute('disabled', 'disabled');
     this.thirtySecBtn.setAttribute('disabled', 'disabled');
@@ -110,10 +66,8 @@ export default class CountdownTimer {
   }
 
   setStartTimeValue(ms) {
-    localStorage.setItem('startTimeValue', ms);
-
-    const setStartTime = this.getStartTimeValue();
-    this.converToDate(setStartTime);
+    localStorage.setItem('startTimeValue', +ms);
+    this.converToDate(ms);
   }
 
   getStartTimeValue() {
@@ -140,6 +94,9 @@ export default class CountdownTimer {
   }
 
   resetTimeValue() {
+    this.toggleStartBtnToStart();
+    this.stopTimer();
+    this.removeDisabledBtn();
     this.days.textContent = '00';
     this.hours.textContent = '00';
     this.mins.textContent = '00';
@@ -160,7 +117,7 @@ export default class CountdownTimer {
       this.differenceTime = this.countdownTime - Date.now();
 
       if (this.differenceTime <= 999) {
-        this.handleResetBtn();
+        this.resetTimeValue();
       }
 
       this.setCurrentTimeValue(this.differenceTime);
@@ -225,14 +182,31 @@ export default class CountdownTimer {
     }
   }
 
-  //чтоб не было таких списков можно ловить же всплытие?!
   timerInit() {
-    this.tenSecBtn.addEventListener('click', this.handleTenSecBtn);
-    this.twentySecBtn.addEventListener('click', this.handleTwentySecBtn);
-    this.thirtySecBtn.addEventListener('click', this.handleThirtySecBtn);
-    this.wunHourBtn.addEventListener('click', this.hangleOneHourBtn);
-    this.wunDayBtn.addEventListener('click', this.handleOneDayBtn);
-    this.startBtn.addEventListener('click', this.handleStartBtn);
-    this.resetBtn.addEventListener('click', this.handleResetBtn);
+    this.form.addEventListener('click', event => {
+      const target = event.target;
+      if (target.nodeName !== 'BUTTON') {
+        return;
+      }
+
+      if (
+        target.dataset.value !== 'start' &&
+        target.dataset.value !== 'reset'
+      ) {
+        const ms = target.dataset.time;
+        this.setStartTimeValue(ms);
+        this.removeDisabledStartBtn();
+      }
+
+      if (target.dataset.value === 'start') {
+        this.setDisabledTimeBtn();
+        this.toggleStartBtnClass();
+      }
+
+      if (target.dataset.value === 'reset') {
+        this.resetTimeValue();
+      }
+      console.dir(this.form.childNodes[3].childNodes[1].childNodes);
+    });
   }
 }
