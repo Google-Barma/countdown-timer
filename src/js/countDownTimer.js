@@ -26,7 +26,7 @@ export default class CountdownTimer {
     this.form = document.querySelector(`${selector}`);
   }
 
-  setDisabledTimeBtn() {
+  _setDisabledTimeBtn() {
     // this.form.childNodes[3].childNodes[1].childNodes.forEach(item => {
     //   if (item !== 'text') {
     //     console.log(item);
@@ -40,7 +40,7 @@ export default class CountdownTimer {
     this.wunDayBtn.setAttribute('disabled', 'disabled');
   }
 
-  removeDisabledBtn() {
+  _removeDisabledBtn() {
     this.tenSecBtn.removeAttribute('disabled');
     this.twentySecBtn.removeAttribute('disabled');
     this.thirtySecBtn.removeAttribute('disabled');
@@ -48,46 +48,46 @@ export default class CountdownTimer {
     this.wunDayBtn.removeAttribute('disabled');
   }
 
-  setDisabledStartBtn() {
+  _setDisabledStartBtn() {
     this.startBtn.setAttribute('disabled', 'disabled');
   }
 
-  removeDisabledStartBtn() {
+  _removeDisabledStartBtn() {
     this.startBtn.removeAttribute('disabled');
   }
 
-  setStartTimeValue(ms) {
+  _setStartTimeValue(ms) {
     localStorage.setItem('startTimeValue', +ms);
-    this.converToDate(ms);
+    this._converToDate(ms);
   }
 
-  getStartTimeValue() {
+  _getStartTimeValue() {
     return localStorage.getItem('startTimeValue');
   }
 
-  setCurrentTimeValue(ms) {
+  _setCurrentTimeValue(ms) {
     localStorage.setItem('currentValue', ms);
   }
 
-  getCurrentTimeValue() {
+  _getCurrentTimeValue() {
     return localStorage.getItem('currentValue');
   }
 
-  converToDate(ms) {
+  _converToDate(ms) {
     this.days.textContent = `0${parseInt(ms / 1000 / 3600 / 24)}`;
-    this.hours.textContent = this.pad(Math.floor((ms / 1000 / 3600) % 24));
-    this.mins.textContent = this.pad(Math.floor((ms / 1000 / 60) % 60));
-    this.secs.textContent = this.pad(Math.floor((ms / 1000) % 60));
+    this.hours.textContent = this._pad(Math.floor((ms / 1000 / 3600) % 24));
+    this.mins.textContent = this._pad(Math.floor((ms / 1000 / 60) % 60));
+    this.secs.textContent = this._pad(Math.floor((ms / 1000) % 60));
   }
 
-  pad(value) {
+  _pad(value) {
     return String(value).padStart(2, 0);
   }
 
-  resetTimeValue() {
-    this.toggleStartBtnToStart();
-    this.stopTimer();
-    this.removeDisabledBtn();
+  _resetTimeValue() {
+    this._toggleStartBtnToStart();
+    this._stopTimer();
+    this._removeDisabledBtn();
     this.days.textContent = '00';
     this.hours.textContent = '00';
     this.mins.textContent = '00';
@@ -96,36 +96,36 @@ export default class CountdownTimer {
     localStorage.removeItem('startTimeValue');
     localStorage.removeItem('currentValue');
 
-    this.setDisabledStartBtn();
+    this._setDisabledStartBtn();
   }
 
-  stopTimer() {
+  _stopTimer() {
     clearInterval(this.intervalId);
   }
 
-  countdown() {
+  _countdown() {
     this.intervalId = setInterval(() => {
       this.differenceTime = this.countdownTime - Date.now();
 
       if (this.differenceTime <= 999) {
-        this.resetTimeValue();
+        this._resetTimeValue();
       }
 
-      this.setCurrentTimeValue(this.differenceTime);
-      this.converToDate(this.differenceTime);
+      this._setCurrentTimeValue(this.differenceTime);
+      this._converToDate(this.differenceTime);
     }, 1000);
   }
 
-  startCountdown() {
-    this.countdownTime = +this.getStartTimeValue() + Date.now();
+  _startCountdown() {
+    this.countdownTime = +this._getStartTimeValue() + Date.now();
 
-    this.countdown();
+    this._countdown();
   }
 
-  continueCountdown() {
-    this.countdownTime = +this.getCurrentTimeValue() + Date.now();
+  _continueCountdown() {
+    this.countdownTime = +this._getCurrentTimeValue() + Date.now();
 
-    this.countdown();
+    this._countdown();
   }
 
   // startCountdown() {
@@ -139,17 +139,17 @@ export default class CountdownTimer {
   //   }, 1000);
   // }
 
-  toggleStartBtnToPause() {
+  _toggleStartBtnToPause() {
     this.startBtn.classList.replace('btn__continue', 'btn__pause');
     this.startBtn.textContent = 'Пауза';
   }
 
-  toggleStartBtnToContinue() {
+  _toggleStartBtnToContinue() {
     this.startBtn.classList.replace('btn__pause', 'btn__continue');
     this.startBtn.textContent = 'Продолжить';
   }
 
-  toggleStartBtnToStart() {
+  _toggleStartBtnToStart() {
     if (this.startBtn.classList.contains('btn__pause')) {
       this.startBtn.classList.replace('btn__pause', 'btn__start');
     }
@@ -159,17 +159,17 @@ export default class CountdownTimer {
     this.startBtn.textContent = 'Старт';
   }
 
-  toggleStartBtnClass() {
+  _toggleStartBtnClass() {
     if (this.startBtn.classList.contains('btn__start')) {
       this.startBtn.classList.replace('btn__start', 'btn__pause');
-      this.toggleStartBtnToPause();
-      this.startCountdown();
+      this._toggleStartBtnToPause();
+      this._startCountdown();
     } else if (this.startBtn.classList.contains('btn__pause')) {
-      this.toggleStartBtnToContinue();
-      this.stopTimer();
+      this._toggleStartBtnToContinue();
+      this._stopTimer();
     } else if (this.startBtn.classList.contains('btn__continue')) {
-      this.toggleStartBtnToPause();
-      this.continueCountdown();
+      this._toggleStartBtnToPause();
+      this._continueCountdown();
     }
   }
 
@@ -185,17 +185,17 @@ export default class CountdownTimer {
         target.dataset.value !== 'reset'
       ) {
         const ms = target.dataset.time;
-        this.setStartTimeValue(ms);
-        this.removeDisabledStartBtn();
+        this._setStartTimeValue(ms);
+        this._removeDisabledStartBtn();
       }
 
       if (target.dataset.value === 'start') {
-        this.setDisabledTimeBtn();
-        this.toggleStartBtnClass();
+        this._setDisabledTimeBtn();
+        this._toggleStartBtnClass();
       }
 
       if (target.dataset.value === 'reset') {
-        this.resetTimeValue();
+        this._resetTimeValue();
       }
     });
   }
