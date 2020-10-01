@@ -206,7 +206,6 @@ export default class CountdownTimer {
       if (target.dataset.value === 'reset') {
         this.resetTimeValue();
       }
-      console.dir(this.form.childNodes[3].childNodes[1].childNodes);
     });
   }
 }
