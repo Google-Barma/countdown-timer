@@ -128,7 +128,7 @@ export default class CountdownTimer {
     this._countdown();
   }
 
-  // startCountdown() {
+  // _startCountdown() {
   //   this.countdownTime = this.getStartTimeValue + Date.now();
 
   //   this.interval = setTimeout(function tickTack() {
