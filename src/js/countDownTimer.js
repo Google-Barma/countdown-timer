@@ -106,9 +106,12 @@ export default class CountdownTimer {
   _countdown() {
     this.intervalId = setInterval(() => {
       this.differenceTime = this.countdownTime - Date.now();
+      console.log(this.differenceTime);
 
-      if (this.differenceTime <= 999) {
+      if (this.differenceTime < 0) {
+        console.log('reset');
         this._resetTimeValue();
+        return;
       }
 
       this._setCurrentTimeValue(this.differenceTime);
