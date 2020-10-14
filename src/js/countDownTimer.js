@@ -77,7 +77,7 @@ export default class CountdownTimer {
     this.days.textContent = `0${parseInt(ms / 1000 / 3600 / 24)}`;
     this.hours.textContent = this._pad(Math.floor((ms / 1000 / 3600) % 24));
     this.mins.textContent = this._pad(Math.floor((ms / 1000 / 60) % 60));
-    this.secs.textContent = this._pad(Math.floor((ms / 1000) % 60));
+    this.secs.textContent = this._pad(Math.round((ms / 1000) % 60));
   }
 
   _pad(value) {
